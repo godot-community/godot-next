@@ -1,11 +1,18 @@
 class_name Array2D
-extends Reference
-# author: willnationsdev
-# description: A 2D Array class
+extends RefCounted
+## A class for storing 2D [Array]s (also known as matrices), such as those built into other coding languages. [br]
+## Author: willnationsdev [br]
+##
+## All position co-ordinates use [Array] numbering, starting at 0, and specify [b]row[/b] before [b]column[/b]
+## [br][br][b]Example:[/b]
+## [codeblock]Array2D.get_cell(2,5)[/codeblock]
+## Returns the value of the cell in the third row of the sixth column.
 
 var data: Array = []
 
+# All 
 
+## Call to fill [Array2D] with data in [Array] format, or (if [param p_deep_copy] is true) Array of Arrays format.
 func _init(p_array: Array = [], p_deep_copy : bool = true):
 	if p_deep_copy:
 		for row in p_array:
@@ -137,15 +144,7 @@ func sort_col(p_idx: int):
 	_sort_axis(p_idx, false)
 
 
-func sort_row_custom(p_idx: int, p_obj: Object, p_func: String):
-	_sort_axis_custom(p_idx, true, p_obj, p_func)
-
-
-func sort_col_custom(p_idx: int, p_obj: Object, p_func: String):
-	_sort_axis_custom(p_idx, false, p_obj, p_func)
-
-
-func duplicate() -> Reference:
+func duplicate() -> RefCounted:
 	return load(get_script().resource_path).new(data)
 
 
@@ -212,7 +211,7 @@ func fill_col(p_idx: int, p_value):
 func remove_row(p_idx: int):
 	assert(p_idx >= 0)
 	assert(len(data) > p_idx)
-	data.remove(p_idx)
+	data.remove_at(p_idx)
 
 
 func remove_col(p_idx: int):
@@ -239,18 +238,18 @@ func has(p_value) -> bool:
 	return false
 
 
-func invert() -> Reference:
-	data.invert()
+func invert() -> RefCounted:
+	data.reverse()
 	return self
 
 
-func invert_row(p_idx: int) -> Reference:
+func invert_row(p_idx: int) -> RefCounted:
 	assert(p_idx >= 0 and len(data) > p_idx)
-	data[p_idx].invert()
+	data[p_idx].reverse()
 	return self
 
 
-func invert_col(p_idx: int) -> Reference:
+func invert_col(p_idx: int) -> RefCounted:
 	assert(len(data) > 0)
 	assert(p_idx >= 0 and len(data[0]) > p_idx)
 	var col = get_col(p_idx)
@@ -292,7 +291,7 @@ func rfind(p_value) -> Vector2:
 	return Vector2(-1, -1)
 
 
-func transpose() -> Reference:
+func transpose() -> RefCounted:
 	var width : int = len(data)
 	var height : int = len(data[0])
 	var transposed_matrix : Array
@@ -329,13 +328,4 @@ func _sort_axis(p_idx: int, p_is_row: bool):
 		return
 	var col = get_col(p_idx)
 	col.sort()
-	set_col(p_idx, col)
-
-
-func _sort_axis_custom(p_idx: int, p_is_row: bool, p_obj: Object, p_func: String):
-	if p_is_row:
-		data[p_idx].sort_custom(p_obj, p_func)
-		return
-	var col = get_col(p_idx)
-	col.sort_custom(p_obj, p_func)
 	set_col(p_idx, col)
